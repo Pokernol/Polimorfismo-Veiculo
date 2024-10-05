@@ -1,79 +1,137 @@
 package br.com.fatecmogidascruzes.server;
 
-import br.com.fatecmogidascruzes.entityAnimal.Ave;
-import br.com.fatecmogidascruzes.entityAnimal.Cachorro;
-import br.com.fatecmogidascruzes.entityAnimal.Coruja;
-import br.com.fatecmogidascruzes.entityAnimal.Mamifero;
-import br.com.fatecmogidascruzes.entityCliente.PessoaFisica;
-import br.com.fatecmogidascruzes.entityCliente.PessoaJuridica;
+import br.com.fatecmogidascruzes.model.entity.Carro;
+import br.com.fatecmogidascruzes.model.entity.Moto;
+import br.com.fatecmogidascruzes.model.entity.Veiculo;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    private final List<Veiculo> veiculos = new ArrayList<>();
+    private final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n\nBem-vindo ao sistema de testes de Polimorfismo.");
+        new Main().executar();
+    }
 
-        System.out.println("Bem-vindo ao sistema de testes de classes abstratas");
-        System.out.println("1° - Testar animais");
-        System.out.println("2° - Testar clientes");
-        System.out.print("Escolha uma das opção:");
-        int opcao = scanner.nextInt();
+    public void executar() {
+        int opcao;
 
-        switch (opcao) {
-            case 1:
-                testarAnimais();
-                break;
-            case 2:
-                testarClientes();
-                break;
-            default:
-                System.out.println("Opção inválida");
+        do {
+            System.out.println("\nPor favor escolha uma opção:");
+            System.out.println("1° - Carro");
+            System.out.println("2° - Moto");
+            System.out.println("3° - Listar veículos cadastrados");
+            System.out.println("4º - Realizar cálculo e reajuste de preços");
+            System.out.println("5º - Sair");
+            System.out.print("\nEscolha uma das opções: ");
+            opcao = scanner.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    cadastrarCarro();
+                    break;
+                case 2:
+                    cadastrarMoto();
+                    break;
+                case 3:
+                    listarVeiculos();
+                    break;
+                case 4:
+                    realizarCalculoEReajuste();
+                    break;
+                case 5:
+                    System.out.println("\nSaindo do sistema...");
+                    break;
+                default:
+                    System.out.println("\nOpção inválida");
+            }
+        } while (opcao != 5);
+    }
+
+    private void cadastrarCarro() {
+        scanner.nextLine();
+
+        System.out.print("\nPor favor digite o Modelo do carro: ");
+        String modelo = scanner.nextLine();
+
+        System.out.print("Por favor digite o Preço do carro: ");
+        double preco = scanner.nextDouble();
+
+        System.out.print("Por favor digite a Quilometragem do carro: ");
+        int km = scanner.nextInt();
+
+        veiculos.add(new Carro(modelo, preco, km));
+
+        System.out.println("\nCarro cadastrado com sucesso!");
+    }
+
+    private void cadastrarMoto() {
+        scanner.nextLine();
+
+        System.out.print("\nPor favor digite o Modelo da moto: ");
+        String modelo = scanner.nextLine();
+
+        System.out.print("Por favor digite o Preço da moto: ");
+        double preco = scanner.nextDouble();
+
+        System.out.print("Por favor digite o Ano da moto: ");
+        int ano = scanner.nextInt();
+
+        veiculos.add(new Moto(modelo, preco, ano));
+
+        System.out.println("\nMoto cadastrada com sucesso!");
+    }
+
+    public void listarVeiculos() {
+        if (veiculos.isEmpty()) {
+            System.out.println("\nNenhum veículo cadastrado.");
+        } else {
+            System.out.println("\nVeículos cadastrados:");
+            for (Veiculo veiculo : veiculos) {
+                veiculo.printDados();
+                System.out.println("-------------");
+            }
         }
     }
 
-    private static void testarAnimais() {
-        Mamifero cachorro = new Cachorro();
-        System.out.println("\nCachorro:");
-        System.out.println(cachorro.mover());
-        System.out.println(cachorro.parir());
-        System.out.println(cachorro.mamar());
-        System.out.println(cachorro.respirar());
+    public void realizarCalculoEReajuste() {
+        double totalPrecos = calcularTotalPrecos();
+        System.out.println("\nTotal dos preços dos veículos antes dos reajustes: R$ " + totalPrecos);
 
-        Ave coruja = new Coruja();
-        System.out.println("\nCoruja:");
-        System.out.println(coruja.mover());
-        System.out.println(coruja.voar());
-        System.out.println(coruja.pouso());
-        System.out.println(coruja.respirar());
+        aplicarReajustes();
+
+        double totalAposReajuste = calcularTotalPrecos();
+        System.out.println("\nTotal dos preços dos veículos após os reajustes: R$ " + totalAposReajuste);
     }
 
-    private static void testarClientes() {
+    private double calcularTotalPrecos() {
+        double total = 0;
+        for (Veiculo veiculo : veiculos) {
+            total += veiculo.getPreco();
+        }
+        return total;
+    }
 
-        System.out.println("\nCriando um cliente pessoa física...");
-
-        PessoaFisica clientePessoaFisica = new PessoaFisica();
-        clientePessoaFisica.setNome("João da Silva");
-        clientePessoaFisica.setCpf("123.456.789-10");
-        clientePessoaFisica.setEstadoCivil("Solteiro");
-        clientePessoaFisica.setDataAberturaConta(LocalDate.now());
-        clientePessoaFisica.setAgencia(1234);
-        clientePessoaFisica.setConta(123456);
-        clientePessoaFisica.setSaldo(1000.0);
-        System.out.println("\nInformações do cliente pessoa física:");
-        clientePessoaFisica.exibirInformacoes();
-
-        System.out.println("\nCriando um cliente pessoa jurídica...");
-
-        PessoaJuridica clientePessoaJuridica = new PessoaJuridica();
-        clientePessoaJuridica.setCnpj("12.345.678/0001-99");
-        clientePessoaJuridica.setResponsavel("Empresa Ltda");
-        clientePessoaJuridica.setPorteEmpresa("Pequena");
-        clientePessoaJuridica.setDataAberturaConta(LocalDate.now());
-        clientePessoaJuridica.setAgencia(5678);
-        clientePessoaJuridica.setConta(987654);
-        clientePessoaJuridica.setSaldo(2000.0);
-        System.out.println("\nInformações do cliente pessoa jurídica:");
-        clientePessoaJuridica.exibirInformacoes();
+    private void aplicarReajustes() {
+        for (Veiculo veiculo : veiculos) {
+            if (veiculo instanceof Moto moto) {
+                if (moto.getAno() >= 2008) {
+                    double precoReajustado = moto.getPreco() * 0.10;
+                    moto.setPreco(precoReajustado);
+                    System.out.println("Preço da moto " + moto.getModelo() + "  ajustado para: R$ " + precoReajustado);
+                }
+            } else if (veiculo instanceof Carro carro) {
+                if (carro.getKm() > 100000) {
+                    double precoReajustado = carro.getPreco() * 0.08;
+                    carro.setPreco(precoReajustado);
+                    System.out.println("Preço do carro " + carro.getModelo() + " ajustado para: R$ " + precoReajustado);
+                }
+            }
+        }
     }
 }
